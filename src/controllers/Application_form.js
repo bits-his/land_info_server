@@ -60,7 +60,7 @@ export const Application_form = (req, res) => {
           power_of_attorney_if_any,
           location_of_land_required,
           application_date,
-          application_id:12,
+          application_id,
           query_type,
         },
       }
