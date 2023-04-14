@@ -35,9 +35,11 @@ require('./config/passport')(passport);
 app.get('/', (req, res) => res.send('Hello my World'));
 
 require('./routes/user.js')(app);
+require('./routes/RecommendationLetter.js')(app);
+require('./routes/LetterOfGrant.js')(app);
 
 //create a server
-var server = app.listen(port, function() {
+var server = app.listen(port, function () {
   var host = server.address().address;
   var port = server.address().port;
 
