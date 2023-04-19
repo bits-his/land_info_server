@@ -26,6 +26,6 @@ export const for_information = (req, res) => {
     .then((results) => res.json({ succes: true, results }))
     .catch((err) => {
       console.log(err);
-      res.status(500).json({ succes: false });
+      res.status(500).json({ succes: false });        
     });
 };
