@@ -1,16 +1,24 @@
 import db from "../models";
 
 export const for_information = (req, res) => {
-  const { file_no = "", grant_number = "", date_issue = "" } = req.body;
+  const {
+    id = "",
+    tittle = "",
+    department = "",
+    file_name = "",
+    signture_date = "",
+  } = req.body;
   const { in_query_type = "Insert" } = req.query;
   db.sequelize
     .query(
-      `CALL lis.for_information(:file_no,:grant_number,:date_issue,:in_query_type)`,
+      `CALL lis.for_information(:id,:tittle,:department,:signture_date,:file_name:,in_query_type)`,
       {
         replacements: {
-          file_no,
-          grant_number,
-          date_issue,
+          id,
+          tittle,
+          department,
+          signture_date,
+          file_name,
           in_query_type,
         },
       }
