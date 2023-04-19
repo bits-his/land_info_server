@@ -1,4 +1,4 @@
-import { LetterOfGrant } from '../controllers/LetterOfGrant';
+import { LetterOfGrant, getGrant } from '../controllers/LetterOfGrant';
 
 
 module.exports = (app) => {
@@ -6,4 +6,5 @@ module.exports = (app) => {
         '/api/create-letter-of-grant',
         LetterOfGrant
     );
+    app.get('/api/getGrant',getGrant)
 };
