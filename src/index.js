@@ -38,6 +38,9 @@ require('./routes/user.js')(app);
 require('./routes/RecommendationLetter.js')(app);
 require('./routes/LetterOfGrant.js')(app);
 require('./routes/required_doc.js')(app);
+require('./routes/Application_form.js')(app);
+require('./routes/layout_policies.js')(app);
+require('./routes/for_information.js')(app);
 
 //create a server
 var server = app.listen(port, function () {
