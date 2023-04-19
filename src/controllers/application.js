@@ -134,7 +134,10 @@ const {application_id="", applicant_full_name="", amount="", description="",type
     }
   })
   .then((results)=>{
-    db.sequelize.query(`UPDATE lis."Application_form" set status='application-fee-paid' where application_id='${application_id}' `)
+
+   type=== 'commercial' || 'residential'? db.sequelize.query(`UPDATE lis."Application_form" set status='application-fee-paid' where application_id='${application_id}' `):''
+    type==='grant'?
+    db.sequelize.query(`UPDATE lis.letter_of_grant set status='grant-fee-paid' where file_no='${application_id}' `):''
     res.json({success:true,results})})
   .catch((err)=>res.status(500).json({success:true,}))
 }
@@ -185,7 +188,16 @@ export const generateFile_no =(req,res)=>{
 
 export const getPlots =(req,res)=>{
 
-  db.sequelize.query(`SELECT a.layout_address,a.layout_number,b.plots_numbers from lis.list_of_available_layouts a join lis.plots_numbers b on a.layout_number=b.layout_number`)
+  db.sequelize.query(`SELECT a.layout_address,a.layout_number,b.plots_numbers,b.beacon_numbers from lis.list_of_available_layouts a join lis.plots_numbers b on a.layout_number=b.layout_number`)
+  .then((results)=>res.json({success:true,results}))
+  .catch((err)=>res.status(500).json({success:false,}))
+}
+
+export const report_on_application = (req,res)=>{
+const {right_of_occupancy_number='',does_shape_agrees_with_town_plan='', GKN_no='', applicant_plan_sufficient='', is_ground_open='', is_the_plot_completely_beaconed='', tracing_number='', deposition_no='', it_lies_on_unplanned_layout='', lay_on_layout_no='', seperate_survey_required='', does_it_lies_area_town_plan='', Town_plan_no='',the_area_shown_is_for_purpose_aapplied_for='',has_the_place_hold_titile_before='',does_railway_runs_through_the_plot='',is_the_plot_along_side_federal_road='',area_applied_for=''}=req.body;
+db.sequelize.query(`INSERT INTO lis.report_on_application(
+	right_of_occupancy_number, "GKN_no", applicant_plan_sufficient, is_ground_open, is_the_plot_completely_beaconed, tracing_number, deposition_no, it_lies_on_unplanned_layout, lay_on_layout_no, seperate_survey_required, does_it_lies_area_town_plan, "Town_plan_no", does_shape_agrees_with_town_plan, the_area_shown_is_for_purpose_aapplied_for, has_the_place_hold_titile_before, does_railway_runs_through_the_plot, is_the_plot_along_side_federal_road, area_applied_for, yes_no_id)
+	VALUES ('${right_of_occupancy_number}', '${GKN_no}', '${applicant_plan_sufficient}', '${is_ground_open}', '${is_the_plot_completely_beaconed}', '${tracing_number}', '${deposition_no}', '${it_lies_on_unplanned_layout}', '${lay_on_layout_no}', '${seperate_survey_required}', '${does_it_lies_area_town_plan}', '${Town_plan_no}', '${does_shape_agrees_with_town_plan}', '${the_area_shown_is_for_purpose_aapplied_for}', '${has_the_place_hold_titile_before}', '${does_railway_runs_through_the_plot}', '${is_the_plot_along_side_federal_road}', '${area_applied_for}', 11)`)
   .then((results)=>res.json({success:true,results}))
   .catch((err)=>res.status(500).json({success:false,}))
 }

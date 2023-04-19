@@ -46,10 +46,10 @@ export const LetterOfGrant = (req, res) => {
                     permsec_signature,
                     signature_date,
                     grant_number:`GRANT/${moment().format('YYYY')}/${nextCode}`,
-                    startus:'pending',
+                    status:'pending',
                     query_type,
                 }
-            }).then((results) => { updateNextCode('applicant') ;res.status(200).json({ success: true, results })})
+            }).then((results) => { updateNextCode('grant') ;res.status(200).json({ success: true, results })})
                 .catch((err) => { console.log(err); res.status(500).json({ success: false }) })
           }})
 
@@ -57,7 +57,7 @@ export const LetterOfGrant = (req, res) => {
 
 export const getGrant = (req,res)=>{
 
-    db.sequelize.query(`SELECT * FROM lis.letter_of_grant`)
+    db.sequelize.query(`SELECT * FROM lis.letter_of_grant where status='pending'`)
     .then((results)=>res.json({success:true,results}))
   .catch((err)=>res.status(500).json({success:true,}))
 }
