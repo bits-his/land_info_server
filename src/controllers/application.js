@@ -201,3 +201,19 @@ db.sequelize.query(`INSERT INTO lis.report_on_application(
   .then((results)=>res.json({success:true,results}))
   .catch((err)=>res.status(500).json({success:false,}))
 }
+
+export const schedule_payment = (req,res)=>{
+const {name='', file_no='', purpose_payment='', amount='', rank='', date}=req.body;
+  db.sequelize.query(`INSERT INTO lis.schedule_payment(
+     applicant_name, file_no, purpose_payment, amount, rank, date)
+    VALUES ('${name}', '${file_no}', '${purpose_payment}', '${amount}', '${rank}', '${date}')`)
+    .then((results)=>res.json({success:true,results}))
+    .catch((err)=>res.status(500).json({success:false,}))
+}       
+
+export const getSchedule = (req,res)=>{
+  
+    db.sequelize.query(`SELECT * FROM lis.schedule_payment`)
+      .then((results)=>res.json({success:true,results}))
+      .catch((err)=>res.status(500).json({success:false,}))
+  }  
