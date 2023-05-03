@@ -29,7 +29,8 @@ export const LetterOfGrant = (req, res) => {
         permsec_signature = '',
         signature_date = '',
         query_type = 'Insert',
-    } = req.body
+    } = req.body;
+    const {file_nos=''}=req.query;
     console.log(req.body)
     getNextCode(
         'grant',
@@ -49,7 +50,7 @@ export const LetterOfGrant = (req, res) => {
                     status:'pending',
                     query_type,
                 }
-            }).then((results) => { updateNextCode('grant') ;res.status(200).json({ success: true, results })})
+            }).then((results) => {db.sequelize.query(`UPDATE lis.recommendation_letter set grant_status='generated' where application_file_number='${file_nos}'`) ; updateNextCode('grant') ;res.status(200).json({ success: true, results,grant:`GRANT/${moment().format('YYYY')}/${nextCode}`,})})
                 .catch((err) => { console.log(err); res.status(500).json({ success: false }) })
           }})
 
