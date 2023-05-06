@@ -137,7 +137,8 @@ const {application_id="", applicant_full_name="", amount="", description="",type
 
    type=== 'commercial' || 'residential'? db.sequelize.query(`UPDATE lis."Application_form" set status='application-fee-paid' where application_id='${application_id}' `):''
     type==='grant'?
-    db.sequelize.query(`UPDATE lis.letter_of_grant set status='grant-fee-paid' where file_no='${application_id}' `):''
+    db.sequelize.query(`UPDATE lis.letter_of_grant set status='grant-fee-paid' where file_no='${application_id}' `):type==='conversion'?
+    db.sequelize.query(`update lis.conversion set status='paid' where file_no='${application_id}'`):''
     res.json({success:true,results})})
   .catch((err)=>res.status(500).json({success:true,}))
 }

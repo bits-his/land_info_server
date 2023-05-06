@@ -20,7 +20,7 @@ export const conversion = (req, res) => {
         date = null,
         signature = null,
         file_no = null,
-        status='pending'
+        status = 'pending'
     } = req.body;
     console.log(req.body);
     // const { in_query_type = null } = req.query;
@@ -38,13 +38,13 @@ export const conversion = (req, res) => {
         });
 };
 
-export const getConversion = (req,res)=>{
-
-    db.sequelize.query(`select * from lis.conversion where status='pending'`)
-    .then((results) => res.json({ succes: true, results }))
-    .catch((err) => {
-        console.log(err);
-        res.status(500).json({ succes: false });
-    });
+export const getConversion =     (req, res) => {
+    const {status=''}=req.query;    
+    db.sequelize.query(`select * from lis.conversion where status='${status}'`)
+        .then((results) => res.json({ succes: true, results }))
+        .catch((err) => {
+            console.log(err);
+            res.status(500).json({ succes: false });
+        });
 }
 // export { Application_form};
