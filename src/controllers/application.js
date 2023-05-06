@@ -169,16 +169,16 @@ export const getF =(req,res)=>{
 }
 
 export const generateFile_no =(req,res)=>{
-  const {application_id=''}=req.query;
+  const {application_id='',type=''}=req.query;
   getNextCode(
     'applicant',
     (resp) => {
       if (resp && resp.length) {
         let nextCode = resp[0][0].next_code; 
-        db.sequelize.query(`UPDATE lis."Application_form" set file_no='COM/${moment().format('YYYY')}/${nextCode}' WHERE application_id='${application_id}'`)
+        db.sequelize.query(`UPDATE lis."Application_form" set file_no='${type==='commercial'?'COM':'RES'}/${moment().format('YYYY')}/${nextCode}' WHERE application_id='${application_id}'`)
   .then((results)=>{
     db.sequelize.query(`UPDATE lis."Application_form" set status='file_no_generated' WHERE application_id='${application_id}'`)
-    res.json({success:true,results,file_no:`COM/${moment().format('YYYY')}/${nextCode}`})
+    res.json({success:true,results,file_no:`${type==='commercial'?'COM':'RES'}/${moment().format('YYYY')}/${nextCode}`})
     updateNextCode('applicant') 
   })
   .catch((err)=>res.status(500).json({success:false,}))
