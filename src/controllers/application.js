@@ -189,7 +189,7 @@ export const generateFile_no =(req,res)=>{
 
 export const getPlots =(req,res)=>{
 
-  db.sequelize.query(`SELECT a.layout_address,a.layout_number,b.plots_numbers,b.beacon_numbers from lis.list_of_available_layouts a join lis.plots_numbers b on a.layout_number=b.layout_number`)
+  db.sequelize.query(`SELECT b.location,a.layout_number,a.survey_charges,a.development_charges,a.term,a.annual_ground_rent,b.plan_number,b.plots_numbers,b.beacon_numbers from lis.layout_policies a join lis.plots_numbers b on a.layout_number=b.layout_number`)
   .then((results)=>res.json({success:true,results}))
   .catch((err)=>res.status(500).json({success:false,}))
 }
@@ -215,6 +215,13 @@ const {name='', file_no='', purpose_payment='', amount='', rank='', date}=req.bo
 export const getSchedule = (req,res)=>{
   
     db.sequelize.query(`SELECT * FROM lis.schedule_payment`)
+      .then((results)=>res.json({success:true,results}))
+      .catch((err)=>res.status(500).json({success:false,}))
+  }  
+
+  export const getPlotiig = (req,res)=>{
+  
+    db.sequelize.query(`SELECT * FROM lis.plots_numbers`)
       .then((results)=>res.json({success:true,results}))
       .catch((err)=>res.status(500).json({success:false,}))
   }  

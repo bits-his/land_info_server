@@ -71,13 +71,39 @@ export const getList = (req,res)=>{
 
 export const layoutPolicies = (req,res)=>{
 
-    const {layout_number='', policy_name='', item_description='', item_value='',in_query_type='Insert'}=req.body;
-    db.sequelize.query(`CALL lis.layout_policies(:layout_number,:policy_name,:item_description,:item_value,:in_query_type)`,{
-        replacements:{
-            layout_number, policy_name, item_description, item_value:parseInt(item_value),in_query_type
-        }
-    }) .then((results)=>res.json({success:true,results}))
-    .catch((err)=>{console.log(err);res.status(500).json({success:false})})
+    const {
+        layout_number = "",
+        policy_item_id = "",
+        policy_name = "",
+        item_description = "",
+        item_value = "",
+        survey_charges='',
+        development_charges='',
+        term='',annual_ground_rent=''
+      } = req.body;
+      const { in_query_type = "Insert" } = req.query;
+      db.sequelize
+        .query(
+          `CALL lis.layout_policies(:layout_number,:policy_item_id,:policy_name,:item_description,:item_value,:survey_charges,:development_charges,:term,:annual_ground_rent,:in_query_type)`,
+          {
+            replacements: {
+              layout_number,
+              policy_item_id:0,
+              policy_name,
+              item_description,
+              item_value: parseInt(item_value),
+              survey_charges,
+              development_charges,term,
+              annual_ground_rent,
+              in_query_type
+            },
+          }
+        )
+        .then((results) => res.json({ succes: true, results }))
+        .catch((err) => {
+          console.log(err);
+          res.status(500).json({ succes: false });
+        });
 }
 
 
