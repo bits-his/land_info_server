@@ -1,7 +1,7 @@
 import passport from 'passport';
 import config from '../config/config';
 import { allowOnly } from '../services/routesHelper';
-import {RecommendationLetter, getAp, getList, getPolicy, getRec, layoutPolicies} from '../controllers/RecommendationLetter';
+import {ForInfo, RecommendationLetter, getAp, getList, getPolicy, getRec, layoutPolicies} from '../controllers/RecommendationLetter';
 import { getPlotiig, getSchedule, report_on_application, schedule_payment } from '../controllers/application';
 import { plots } from '../controllers/layout_policies';
 
@@ -22,4 +22,5 @@ module.exports = (app) => {
     app.get('/api/getSchedule',getSchedule)
     app.post('/api/plots',plots)
     app.get('/api/getPlotiig',getPlotiig)
+    app.get('/api/getForInfo',ForInfo)
 };

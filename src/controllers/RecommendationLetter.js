@@ -1,3 +1,4 @@
+import { query } from "express";
 import db from "../models"
 
 export const RecommendationLetter = (req, res) => {
@@ -14,10 +15,10 @@ export const RecommendationLetter = (req, res) => {
         survey_charges = '',
         recommendation_DLand = '',
         Dland_signature = '',
-        Dland_sign_date ='2024-07-07',
+        Dland_sign_date ='',
         recommendation_permsec = '',
         Permsec_signature = '',
-        PermSec_sign_date ='2024-07-07',
+        PermSec_sign_date ='',
         grant_approve_reject = '',
         comm_govt_signature = '',
         Comm_govt_signature_date ='2024-07-07',
@@ -51,11 +52,13 @@ export const RecommendationLetter = (req, res) => {
             Comm_govt_signature_date:Comm_govt_signature_date===''?'2024-07-07':Comm_govt_signature_date,
             recommendation_id,
             query_type,
-            status:query_type==='update'?'approved':status
+            status:query_type==='gov'?'approved':status
             // application_id:2
         }
     }).then((results) =>{ 
-        query_type==='update'?db.sequelize.query(`UPDATE lis."Application_form" set cadestral_status='generated' where file_no='${application_file_number}'`):db.sequelize.query(`UPDATE lis."Application_form" set land_status='generated' where file_no='${application_file_number}'`);
+      query_type === 'gov'?db.sequelize.query(`UPDATE lis.recommendation_letter set gov_status='sign where application_file_number = '${application_file_number}'`):''
+        query_type==='update'?db.sequelize.query(`UPDATE lis."Application_form" set cadestral_status='generated' where file_no='${application_file_number}'`):db.sequelize.query(`UPDATE lis."Application_form" set for_status='generated' where file_no='${application_file_number}'`);
+      //  query_type==='gov'?db.sequelize.query(`UPDATE lis."Application_form" set for_status='generated' where file_no='${application_file_number}'`):''
         res.status(200).json({ success: true, results })
     })
         .catch((err) => { console.log(err); res.status(500).json({ success: false }) })
@@ -126,5 +129,12 @@ export const getAp = (req,res)=>{
     db.sequelize.query(`SELECT * FROM lis."Application_form" where file_no='${file_no}'`)
     .then((results)=>res.json({success:true,results}))
     .catch((err)=>{console.log(err);res.status(500).json({success:false})})
+}
+
+export const ForInfo = (req,res)=>{
+  // const {file_no=''}=req.query;
+  db.sequelize.query(`SELECT * FROM lis."Application_form" where for_status='generated'`)
+  .then((results)=>res.json({success:true,results}))
+  .catch((err)=>{console.log(err);res.status(500).json({success:false})})
 }
 // export default { RecommendationLetter }
