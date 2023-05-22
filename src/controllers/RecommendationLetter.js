@@ -56,9 +56,11 @@ export const RecommendationLetter = (req, res) => {
             // application_id:2
         }
     }).then((results) =>{ 
-      query_type === 'gov'?db.sequelize.query(`UPDATE lis.recommendation_letter set gov_status='sign where application_file_number = '${application_file_number}'`):''
-        query_type==='update'?db.sequelize.query(`UPDATE lis."Application_form" set cadestral_status='generated' where file_no='${application_file_number}'`):db.sequelize.query(`UPDATE lis."Application_form" set for_status='generated' where file_no='${application_file_number}'`);
-      //  query_type==='gov'?db.sequelize.query(`UPDATE lis."Application_form" set for_status='generated' where file_no='${application_file_number}'`):''
+      query_type === 'dland'?db.sequelize.query(`UPDATE lis."Application_form" set land_status='generated' where application_file_number = '${application_file_number}'`):''
+      query_type === 'gov'?db.sequelize.query(`UPDATE lis.recommendation_letter set gov_status='sign' where application_file_number = '${application_file_number}'`):''
+     
+        query_type==='permsec'?db.sequelize.query(`UPDATE lis."Application_form" set permsec_status='generated' where file_no='${application_file_number}'`):'';
+       query_type==='gov'?db.sequelize.query(`UPDATE lis."Application_form" set for_status='generated',gov_status='generated' where file_no='${application_file_number}'`):''
         res.status(200).json({ success: true, results })
     })
         .catch((err) => { console.log(err); res.status(500).json({ success: false }) })
