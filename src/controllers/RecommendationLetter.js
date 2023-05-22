@@ -56,7 +56,7 @@ export const RecommendationLetter = (req, res) => {
             // application_id:2
         }
     }).then((results) =>{ 
-      query_type === 'dland'?db.sequelize.query(`UPDATE lis."Application_form" set land_status='generated' where application_file_number = '${application_file_number}'`):''
+      query_type === 'dland'?db.sequelize.query(`UPDATE lis."Application_form" set land_status='generated' where file_no = '${application_file_number}'`):''
       query_type === 'gov'?db.sequelize.query(`UPDATE lis.recommendation_letter set gov_status='sign' where application_file_number = '${application_file_number}'`):''
      
         query_type==='permsec'?db.sequelize.query(`UPDATE lis."Application_form" set permsec_status='generated' where file_no='${application_file_number}'`):'';
