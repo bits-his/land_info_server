@@ -225,3 +225,12 @@ export const getSchedule = (req,res)=>{
       .then((results)=>res.json({success:true,results}))
       .catch((err)=>res.status(500).json({success:false,}))
   }  
+
+
+  export const getSurvey =(req,res)=>{
+    
+  
+    db.sequelize.query(`SELECT * FROM lis."Application_form" WHERE for_status='generated'`)
+    .then((results)=>res.json({success:true,results}))
+    .catch((err)=>res.status(500).json({success:false,}))
+  }
