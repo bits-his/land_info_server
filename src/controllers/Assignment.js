@@ -62,3 +62,12 @@ export const GetAllAssignment = (req, res) => {
         .then((results) => res.json({ success: true, results }))
         .catch((err) => res.status(500).json({ success: true, }))
 }
+
+
+export const GetAssignmentById = (req, res) => {
+    const { right_of_occupancy_number = '' } = req.query;
+
+    db.sequelize.query(`SELECT * FROM lis."assignment" WHERE right_of_occupancy_number='${right_of_occupancy_number}'`)
+        .then((results) => res.json({ success: true, results }))
+        .catch((err) => res.status(500).json({ success: true, }))
+}
