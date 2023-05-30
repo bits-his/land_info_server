@@ -234,3 +234,10 @@ export const getSchedule = (req,res)=>{
     .then((results)=>res.json({success:true,results}))
     .catch((err)=>res.status(500).json({success:false,}))
   }
+
+  export const updateSurvey =(req,res)=>{
+const {file_no=''}=req.query;
+     db.sequelize.query(`UPDATE lis."Application_form" set survey_status='generated' WHERE file_no='${file_no}'`)
+     .then((results)=>res.json({success:true,results}))
+    .catch((err)=>res.status(500).json({success:false,}))
+  }
