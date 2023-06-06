@@ -41,8 +41,9 @@ require('./routes/required_doc.js')(app);
 require('./routes/Application_form.js')(app);
 require('./routes/layout_policies.js')(app);
 require('./routes/for_information.js')(app);
-require('./routes/conversion.js')(app)
-
+require('./routes/conversion.js')(app);
+require('./routes/Assignment.js')(app);
+require('./routes/comments')(app);
 //create a server
 var server = app.listen(port, function () {
   var host = server.address().address;
