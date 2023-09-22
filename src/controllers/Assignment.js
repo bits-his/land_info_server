@@ -49,7 +49,7 @@ export const Assignment = (req, res) => {
                 },
             }
         )
-        .then((results) => res.json({ success: true, results }))
+        .then((results) =>{ db.sequelize.query(`update lis."Application_form" set app_status='assignment' where file_no='${file_no}'`),res.json({ success: true, results })})
         .catch((err) => {
             console.log(err);
             res.status(500).json({ success: false });

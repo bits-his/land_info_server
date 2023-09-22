@@ -11,10 +11,11 @@ function getNextCode(description, callback = (f) => f, error = (f) => f) {
     .catch(error);
 }
 
-function updateNextCode(description, callback = (f) => f, error = (f) => f) {
+function updateNextCode(description, last=f=>f,callback = (f) => f, error = (f) => f,) {
+  console.log(last)
   db.sequelize
     .query(
-      `UPDATE lis."Number_gerenerator" set last_number = last_number + 1 WHERE description='${description}'`,
+      `UPDATE lis."Number_gerenerator" set last_number = last_number + ${parseInt(last)} WHERE description='${description}'`,
     )
     .then(callback)
     .catch(error);
@@ -50,7 +51,8 @@ export const Application_form = (req, res) => {
     application_date = null,
     application_id = null,
     query_type = "Insert",
-    type = ''
+    type = '',
+    child_file_no=''
   } = req.body;
   console.log(req.body);
   // const { in_query_type = null } = req.query;
@@ -62,7 +64,7 @@ export const Application_form = (req, res) => {
 
         db.sequelize
           .query(
-            `CALL  lis.application_form(:Applicant_full_name,:registration_particulars,:Business_location,:correspondance_address,:Annual_income,:Allocated_before,:Applicant_nationality,:State_of_origin,:occupation_business,:nature_of_business,:company_registered_under,:when_where_occupancy_no,:purpose_of_land_use,:purpose_for_application_required,:acitivity_intended_to_undertake,:type_of_building_erected,:estimated_amount_to_spenr,:source_financing,:length_of_term_required,:do_you_have_biz_in_kano,:address_of_local_rep,:power_of_attorney_if_any,:location_of_land_required,:application_date,:application_id,:status,:type,:query_type)`,
+            `CALL  lis.application_form(:Applicant_full_name,:registration_particulars,:Business_location,:correspondance_address,:Annual_income,:Allocated_before,:Applicant_nationality,:State_of_origin,:occupation_business,:nature_of_business,:company_registered_under,:when_where_occupancy_no,:purpose_of_land_use,:purpose_for_application_required,:acitivity_intended_to_undertake,:type_of_building_erected,:estimated_amount_to_spenr,:source_financing,:length_of_term_required,:do_you_have_biz_in_kano,:address_of_local_rep,:power_of_attorney_if_any,:location_of_land_required,:application_date,:application_id,:status,:type,:app_status,:child_file_no,:query_type)`,
             {
               replacements: {
                 Applicant_full_name,
@@ -92,12 +94,15 @@ export const Application_form = (req, res) => {
                 application_id: `APP/${moment().format('YYYY')}/${nextCode}`,
                 query_type,
                 status: 'application',
-                type
+                type,
+                child_file_no,
+              
+                app_status:'Application'
 
               },
             }
           ).then((results) => {
-            updateNextCode('applicant')
+            updateNextCode('applicant',1)
             res.json({ success: true, results, application_id: `APP/${moment().format('YYYY')}/${nextCode}` })
           })
           .catch((err) => {
@@ -109,9 +114,217 @@ export const Application_form = (req, res) => {
 
 };
 
+export const sub_division = (req, res) => {
+  const arr = []
+  req.body.forEach((item,index)=>{
+    console.log(req.body.length)
+    const {
+      Applicant_full_name = null,
+      registration_particulars = null,
+      Business_location = null,
+      correspondance_address = null,
+      Annual_income = 0,
+      Allocated_before = null,
+      Applicant_nationality = null,
+      State_of_origin = null,
+      occupation_business = null,
+      nature_of_business = null,
+      company_registered_under = null,
+      when_where_occupancy_no = null,
+      purpose_of_land_use = null,
+      purpose_for_application_required = null,
+      acitivity_intended_to_undertake = null,
+      type_of_building_erected = null,
+      estimated_amount_to_spenr = 0,
+      source_financing = null,
+      length_of_term_required = null,
+      do_you_have_biz_in_kano = null,
+      address_of_local_rep = null,
+      power_of_attorney_if_any = null,
+      location_of_land_required = null,
+      application_date = null,
+      application_id = null,
+      query_type = "Insert",
+      type = '',
+      child_file_no=''
+    } = item;
+    console.log(req.body);
+  // const { in_query_type = null } = req.query;
+  getNextCode(
+    'applicant',
+    (resp) => {
+      if (resp && resp.length) {
+        let nextCode = resp[0][0].next_code;
+
+        arr.push(db.sequelize
+          .query(
+            `CALL  lis.application_form(:Applicant_full_name,:registration_particulars,:Business_location,:correspondance_address,:Annual_income,:Allocated_before,:Applicant_nationality,:State_of_origin,:occupation_business,:nature_of_business,:company_registered_under,:when_where_occupancy_no,:purpose_of_land_use,:purpose_for_application_required,:acitivity_intended_to_undertake,:type_of_building_erected,:estimated_amount_to_spenr,:source_financing,:length_of_term_required,:do_you_have_biz_in_kano,:address_of_local_rep,:power_of_attorney_if_any,:location_of_land_required,:application_date,:application_id,:status,:type,:app_status,:child_file_no,:query_type)`,
+            {
+              replacements: {
+                Applicant_full_name,
+                registration_particulars,
+                Business_location,
+                correspondance_address,
+                Annual_income: parseInt(Annual_income),
+                Allocated_before,
+                Applicant_nationality,
+                State_of_origin,
+                occupation_business,
+                nature_of_business,
+                company_registered_under,
+                when_where_occupancy_no,
+                purpose_of_land_use,
+                purpose_for_application_required,
+                acitivity_intended_to_undertake,
+                type_of_building_erected,
+                estimated_amount_to_spenr: estimated_amount_to_spenr === 0 ? parseInt(estimated_amount_to_spenr) : 0,
+                source_financing,
+                length_of_term_required,
+                do_you_have_biz_in_kano,
+                address_of_local_rep,
+                power_of_attorney_if_any,
+                location_of_land_required,
+                application_date,
+                application_id: `APP/${moment().format('YYYY')}/${nextCode+index+1}`,
+                query_type,
+                status: 'application-fee-paid',
+                type,
+                child_file_no,
+                app_status:'sub-division'
+
+              },
+            }
+          ))
+      }
+    })
+    Promise.all(arr).then((results) => {
+      updateNextCode('applicant',req.body.length)
+      db.sequelize.query(`UPDATE lis."Application_form" set status='canceled',app_status='canceled' where file_no='${child_file_no}'`)
+      res.json({ success: true, results, application_id: `APP/${moment().format('YYYY')}/${nextCode}` })
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ succes: false });
+    })
+  }
+
+
+
+  )
+
+ 
+  
+
+};
+
+export const Merger = (req, res) => {
+  const arr = []
+  req.body.forEach((item,index)=>{
+    console.log(req.body.length)
+    const {
+      Applicant_full_name = null,
+      registration_particulars = null,
+      Business_location = null,
+      correspondance_address = null,
+      Annual_income = 0,
+      Allocated_before = null,
+      Applicant_nationality = null,
+      State_of_origin = null,
+      occupation_business = null,
+      nature_of_business = null,
+      company_registered_under = null,
+      when_where_occupancy_no = null,
+      purpose_of_land_use = null,
+      purpose_for_application_required = null,
+      acitivity_intended_to_undertake = null,
+      type_of_building_erected = null,
+      estimated_amount_to_spenr = 0,
+      source_financing = null,
+      length_of_term_required = null,
+      do_you_have_biz_in_kano = null,
+      address_of_local_rep = null,
+      power_of_attorney_if_any = null,
+      location_of_land_required = null,
+      application_date = null,
+      application_id = null,
+      query_type = "Insert",
+      type = '',
+      child_file_no=''
+    } = item;
+    console.log(req.body);
+    db.sequelize.query(`UPDATE lis."Application_form" set status='canceled',app_status='canceled' where file_no='${item.child_file_no}'`)
+  // const { in_query_type = null } = req.query;
+  getNextCode(
+    'applicant',
+    (resp) => {
+      if (resp && resp.length) {
+        let nextCode = resp[0][0].next_code;
+
+        arr.push(db.sequelize
+          .query(
+            `CALL  lis.application_form(:Applicant_full_name,:registration_particulars,:Business_location,:correspondance_address,:Annual_income,:Allocated_before,:Applicant_nationality,:State_of_origin,:occupation_business,:nature_of_business,:company_registered_under,:when_where_occupancy_no,:purpose_of_land_use,:purpose_for_application_required,:acitivity_intended_to_undertake,:type_of_building_erected,:estimated_amount_to_spenr,:source_financing,:length_of_term_required,:do_you_have_biz_in_kano,:address_of_local_rep,:power_of_attorney_if_any,:location_of_land_required,:application_date,:application_id,:status,:type,:app_status,:child_file_no,:query_type)`,
+            {
+              replacements: {
+                Applicant_full_name,
+                registration_particulars,
+                Business_location,
+                correspondance_address,
+                Annual_income: parseInt(Annual_income),
+                Allocated_before,
+                Applicant_nationality,
+                State_of_origin,
+                occupation_business,
+                nature_of_business,
+                company_registered_under,
+                when_where_occupancy_no,
+                purpose_of_land_use,
+                purpose_for_application_required,
+                acitivity_intended_to_undertake,
+                type_of_building_erected,
+                estimated_amount_to_spenr: estimated_amount_to_spenr === 0 ? parseInt(estimated_amount_to_spenr) : 0,
+                source_financing,
+                length_of_term_required,
+                do_you_have_biz_in_kano,
+                address_of_local_rep,
+                power_of_attorney_if_any,
+                location_of_land_required,
+                application_date,
+                application_id: `APP/${moment().format('YYYY')}/${nextCode+index+1}`,
+                query_type,
+                status: 'application-fee-paid',
+                type,
+                child_file_no,
+                app_status:'merger'
+
+              },
+            }
+          ));
+         
+      }
+    })
+    Promise.all(arr).then((results) => {
+      updateNextCode('applicant',req.body.length)
+      
+      res.json({ success: true, results, application_id: `APP/${moment().format('YYYY')}/${nextCode}` })
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ succes: false });
+    })
+  }
+
+
+
+  )
+
+ 
+  
+
+};
+
 export const getApplication = (req, res) => {
 
-  db.sequelize.query(`SELECT * FROM lis."Application_form"`)
+  db.sequelize.query(`SELECT * FROM lis."Application_form" where status!='canceled'`)
     .then((results) => res.json({ success: true, results }))
     .catch((err) => res.status(500).json({ success: true, }))
 }
@@ -120,7 +333,7 @@ export const getApplication = (req, res) => {
 export const getByID = (req, res) => {
   const { status = '' } = req.query;
 
-  db.sequelize.query(`SELECT * FROM lis."Application_form" WHERE status='${status}'`)
+  db.sequelize.query(`SELECT * FROM lis."Application_form" WHERE status='${status}' and status!='canceled'`)
     .then((results) => res.json({ success: true, results }))
     .catch((err) => res.status(500).json({ success: true, }))
 }
@@ -159,7 +372,7 @@ export const getCharges = (req, res) => {
 export const getFiles = (req, res) => {
   const { application_id = '' } = req.query;
 
-  db.sequelize.query(`SELECT * FROM lis."Application_form" WHERE Application_id='${application_id}'`)
+  db.sequelize.query(`SELECT * FROM lis."Application_form" WHERE Application_id='${application_id}' and status!='canceled'`)
     .then((results) => res.json({ success: true, results }))
     .catch((err) => res.status(500).json({ success: false, }))
 }
@@ -182,7 +395,7 @@ export const generateFile_no = (req, res) => {
           .then((results) => {
             db.sequelize.query(`UPDATE lis."Application_form" set status='file_no_generated' WHERE application_id='${application_id}'`)
             res.json({ success: true, results, file_no: `${type === 'commercial' ? 'COM' : 'RES'}/${moment().format('YYYY')}/${nextCode}` })
-            updateNextCode('applicant')
+            updateNextCode('applicant',1)
           })
           .catch((err) => res.status(500).json({ success: false, }))
       }
@@ -231,7 +444,7 @@ export const getPlotiig = (req, res) => {
 
 
   export const getSurvey =(req,res)=>{
-     db.sequelize.query(`SELECT * FROM lis."Application_form" WHERE for_status='generated'`)
+     db.sequelize.query(`SELECT * FROM lis."Application_form" WHERE for_status='generated' and status!='canceled' or app_status='sub-division' `)
     .then((results)=>res.json({success:true,results}))
     .catch((err)=>res.status(500).json({success:false,}))
   }
@@ -244,7 +457,7 @@ const {file_no=''}=req.query;
   }
 
   export const getApproved =(req,res)=>{
-    db.sequelize.query(`SELECT * FROM lis."Application_form" WHERE survey_status='generated'`)
+    db.sequelize.query(`SELECT * FROM lis."Application_form" WHERE survey_status='generated' and status!='canceled'`)
    .then((results)=>res.json({success:true,results}))
    .catch((err)=>res.status(500).json({success:false,}))
  }
@@ -259,7 +472,19 @@ const {file_no=''}=req.query;
  }
 
  export const getAassign =(req,res)=>{
-  db.sequelize.query(`SELECT * FROM lis."Application_form" WHERE app_status='assignment'`)
+  db.sequelize.query(`SELECT * FROM lis."Application_form" WHERE app_status='assignment' and status!='canceled'`)
+ .then((results)=>res.json({success:true,results}))
+ .catch((err)=>res.status(500).json({success:false,}))
+}
+
+export const getSubD =(req,res)=>{
+  db.sequelize.query(`SELECT * FROM lis."Application_form" WHERE app_status='sub-division' and status!='canceled'`)
+ .then((results)=>res.json({success:true,results}))
+ .catch((err)=>res.status(500).json({success:false,}))
+}
+
+export const getMerger =(req,res)=>{
+  db.sequelize.query(`SELECT * FROM lis."Application_form" WHERE app_status='merger' and status!='canceled'`)
  .then((results)=>res.json({success:true,results}))
  .catch((err)=>res.status(500).json({success:false,}))
 }

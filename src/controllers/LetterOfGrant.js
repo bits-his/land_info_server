@@ -24,10 +24,10 @@ export const LetterOfGrant = (req, res) => {
     const {
         letter_id = 0,
         file_no = '',
-        date_of_issue = '',
-        serial_no = '',
+        date_of_issue = '2023-06-09',
+        serial_no = 0,
         permsec_signature = '',
-        signature_date = '',
+        signature_date = '2023-05-10',
         query_type = 'Insert',
     } = req.body;
     const {file_nos=''}=req.query;
